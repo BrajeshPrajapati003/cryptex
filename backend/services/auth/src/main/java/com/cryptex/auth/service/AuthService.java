@@ -4,6 +4,7 @@ import com.cryptex.auth.dto.RegisterRequest;
 import com.cryptex.auth.dto.RegisterResponse;
 import com.cryptex.auth.entity.AppUser;
 import com.cryptex.auth.exception.EmailAlreadyExistsException;
+import com.cryptex.auth.mapper.AuthMapper;
 import com.cryptex.auth.repository.AppUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +16,7 @@ public class AuthService {
 
     private final AppUserRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthMapper mapper;
 
     public RegisterResponse register(RegisterRequest request){
 
@@ -22,21 +24,14 @@ public class AuthService {
             throw new EmailAlreadyExistsException(request.email());
         }
 
-        AppUser user = AppUser.builder()
-                .firstName(request.firstName())
-                .lastName(request.lastName())
-                .email(request.email())
-                .password(passwordEncoder.encode(request.password()))
-                .build();
+        AppUser user = mapper.toEntity(request);
+
+        user.setEncodedPassword(
+                passwordEncoder.encode(request.password())
+        );
 
         AppUser saved = repository.save(user);
 
-        return new RegisterResponse(
-                saved.getId(),
-                saved.getFirstName(),
-                saved.getLastName(),
-                saved.getEmail(),
-                "Registration successful"
-        );
+        return mapper.toRegisterResponse(saved);
     }
 }

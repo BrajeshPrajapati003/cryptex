@@ -57,4 +57,8 @@ public class AppUser extends BaseEntity {
     public void changePassword(String password){
         this.password = password;
     }
+
+    public void setEncodedPassword(String encodedPassword){
+        this.password = password;
+    }
 }
