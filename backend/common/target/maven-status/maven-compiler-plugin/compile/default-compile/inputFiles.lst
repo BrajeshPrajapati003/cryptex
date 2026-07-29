@@ -1,1 +1,4 @@
 D:\personal-projects\web\cryptex\backend\common\src\main\java\com\cryptex\common\entity\BaseEntity.java
+D:\personal-projects\web\cryptex\backend\common\src\main\java\com\cryptex\common\exception\ApiException.java
+D:\personal-projects\web\cryptex\backend\common\src\main\java\com\cryptex\common\exception\ErrorResponse.java
+D:\personal-projects\web\cryptex\backend\common\src\main\java\com\cryptex\common\response\ApiResponse.java

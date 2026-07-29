@@ -97,6 +97,8 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
 
+        ex.printStackTrace();
+
         return ResponseEntity.internalServerError().body(response);
     }
 }

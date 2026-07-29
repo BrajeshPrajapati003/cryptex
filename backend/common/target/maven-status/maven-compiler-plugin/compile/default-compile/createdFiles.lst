@@ -1,1 +1,4 @@
+com\cryptex\common\response\ApiResponse.class
 com\cryptex\common\entity\BaseEntity.class
+com\cryptex\common\exception\ApiException.class
+com\cryptex\common\exception\ErrorResponse.class

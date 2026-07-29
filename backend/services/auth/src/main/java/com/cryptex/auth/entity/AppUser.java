@@ -38,13 +38,7 @@ public class AppUser extends BaseEntity {
 
     @Column(nullable = false)
     @Builder.Default // Default: FALSE
-    private boolean enabled = false;
-
-//    @Column(nullable = false, updatable = false)
-//    private Instant createdAt;
-//
-//    @Column(nullable = false)
-//    private Instant updatedAt;
+    private boolean enabled = true;
 
     public void enable(){
         enabled = true;
@@ -54,11 +48,11 @@ public class AppUser extends BaseEntity {
         this.enabled = false;
     }
 
-    public void changePassword(String password){
-        this.password = password;
+    public void changePassword(String encodedPassword){
+        this.password = encodedPassword;
     }
 
-    public void setEncodedPassword(String encodedPassword){
-        this.password = password;
-    }
+//    public void setEncodedPassword(String encodedPassword){
+//        this.password = encodedPassword;
+//    }
 }

@@ -1,5 +1,7 @@
 package com.cryptex.auth.controller;
 
+import com.cryptex.auth.dto.LoginRequest;
+import com.cryptex.auth.dto.LoginResponse;
 import com.cryptex.auth.dto.RegisterRequest;
 import com.cryptex.auth.dto.RegisterResponse;
 import com.cryptex.auth.service.AuthService;
@@ -33,5 +35,21 @@ public class AuthController {
                         "User registered successfully.",
                         response
                 ));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<LoginResponse>> login(
+            @Valid @RequestBody LoginRequest loginRequest
+            ){
+
+        LoginResponse response = authService.login(loginRequest);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Login successful",
+                        response
+                )
+        );
     }
 }
