@@ -1,6 +1,7 @@
 package com.cryptex.auth.security.jwt;
 
 import com.cryptex.auth.security.config.JwtProperties;
+import com.cryptex.auth.security.user.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
@@ -20,16 +24,35 @@ public class JwtService {
 
     private final JwtProperties jwtProperties;
 
+//    public String generateToken(UserDetails userDetails){
+//
+//        Instant now = Instant.now();
+//
+//        return Jwts.builder()
+//                .subject(userDetails.getUsername())
+//                .issuedAt(Date.from(now))
+//                .expiration(Date.from(now.plus(jwtProperties.accessExpiration())))
+//                .signWith(getSigningKey())
+//                .compact();
+//    }
+
     public String generateToken(UserDetails userDetails){
+        Map<String, Object> claims = new HashMap<>();
 
-        Instant now = Instant.now();
+        if (userDetails instanceof CustomUserDetails customUser){
 
-        return Jwts.builder()
-                .subject(userDetails.getUsername())
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(now.plus(jwtProperties.accessExpiration())))
-                .signWith(getSigningKey())
-                .compact();
+            claims.put(
+                    "userId",
+                    customUser.getUser().getId()
+            );
+
+            claims.put(
+                    "role",
+                    customUser.getUser().getRole().name()
+            );
+        }
+
+        return buildToken(claims, userDetails);
     }
 
     public String extractUsername(String token){
@@ -75,19 +98,37 @@ public class JwtService {
         return Keys.hmacShaKeyFor(key);
     }
 
+    private String buildToken(
+            Map<String, Object> claims,
+            UserDetails userDetails
+    ){
 
+        Instant now = Instant.now();
 
-    // Use this overloaded generateToken method
-    // if adding roles, permissions, tenant IDs, etc. in the future.
-//    public String generateToken(Map<String, Object> claims,
-//                                UserDetails userDetails){
-//        return Jwts.builder()
-//                .claims(claims)
-//                .subject(userDetails.getUsername())
-//                .issuedAt(Date.from(Instant.now()))
-//                .expiration(Date.from(Instant.now().plusMillis(jwtProperties.accessExpiration())))
-//                .signWith(getSigningKey())
-//                .compact();
-//    }
+        return Jwts.builder()
+                .claims(claims)
+                .subject(userDetails.getUsername())
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(
+                        now.plus(jwtProperties.accessExpiration())
+                ))
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    public String extractRole(String token){
+        return extractClaim(token,
+                claims -> claims.get("role", String.class));
+    }
+
+    public UUID extractUserId(String token){
+
+        String id = extractClaim(
+                token,
+                claims -> claims.get("userId", String.class)
+        );
+
+        return UUID.fromString(id);
+    }
 
 }
