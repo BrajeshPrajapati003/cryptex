@@ -24,18 +24,6 @@ public class JwtService {
 
     private final JwtProperties jwtProperties;
 
-//    public String generateToken(UserDetails userDetails){
-//
-//        Instant now = Instant.now();
-//
-//        return Jwts.builder()
-//                .subject(userDetails.getUsername())
-//                .issuedAt(Date.from(now))
-//                .expiration(Date.from(now.plus(jwtProperties.accessExpiration())))
-//                .signWith(getSigningKey())
-//                .compact();
-//    }
-
     public String generateToken(UserDetails userDetails){
         Map<String, Object> claims = new HashMap<>();
 

@@ -1,9 +1,9 @@
 package com.cryptex.auth.dto;
 
-public record LoginResponse(
+public record RefreshTokenResponse(
 
         String accessToken,
-        String refreshToken,
+        String refreshToken, // refresh token rotation
         String tokenType
 ) {
 }

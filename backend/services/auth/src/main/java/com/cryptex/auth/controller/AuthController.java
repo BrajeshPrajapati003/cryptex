@@ -1,19 +1,13 @@
 package com.cryptex.auth.controller;
 
-import com.cryptex.auth.dto.LoginRequest;
-import com.cryptex.auth.dto.LoginResponse;
-import com.cryptex.auth.dto.RegisterRequest;
-import com.cryptex.auth.dto.RegisterResponse;
+import com.cryptex.auth.dto.*;
 import com.cryptex.auth.service.AuthService;
 import com.cryptex.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -51,5 +45,22 @@ public class AuthController {
                         response
                 )
         );
+    }
+
+    @PostMapping("/refresh")
+    public RefreshTokenResponse refresh(
+            @RequestBody RefreshTokenRequest request
+    ){
+
+        return authService.refresh(request);
+    }
+
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void logout(
+            @RequestBody RefreshTokenRequest request
+    ){
+
+        authService.logout(request);
     }
 }

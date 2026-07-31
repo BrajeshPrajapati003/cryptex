@@ -5,19 +5,12 @@ import com.cryptex.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-//import java.time.Instant;
-import java.util.UUID;
-
 @Entity
 @Table(name = "users")
 @Builder @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AppUser extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
 
     @Column(nullable = false, length = 50)
     private String firstName;
@@ -38,10 +31,10 @@ public class AppUser extends BaseEntity {
 
     @Column(nullable = false)
     @Builder.Default // Default: FALSE
-    private boolean enabled = true;
+    private boolean enabled = false;
 
     public void enable(){
-        enabled = true;
+        this.enabled = true;
     }
 
     public void disable(){
@@ -52,7 +45,4 @@ public class AppUser extends BaseEntity {
         this.password = encodedPassword;
     }
 
-//    public void setEncodedPassword(String encodedPassword){
-//        this.password = encodedPassword;
-//    }
 }
