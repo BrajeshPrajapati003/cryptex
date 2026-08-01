@@ -1,7 +1,7 @@
 package com.cryptex.notification.service.impl;
 
-import com.cryptex.notification.dto.model.EmailMessage;
-import com.cryptex.notification.service.EmailProvider;
+import com.cryptex.notification.model.EmailMessage;
+import com.cryptex.notification.provider.EmailProvider;
 import com.cryptex.notification.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.cryptex.notification.dto.model;
+package com.cryptex.notification.model;
 
 public record EmailMessage(
 

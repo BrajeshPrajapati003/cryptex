@@ -7,7 +7,7 @@ import com.cryptex.notification.enums.NotificationType;
 import com.cryptex.notification.exception.NotificationNotFoundException;
 import com.cryptex.notification.factory.NotificationFactory;
 import com.cryptex.notification.mapper.NotificationMapper;
-import com.cryptex.notification.dto.model.EmailMessage;
+import com.cryptex.notification.model.EmailMessage;
 import com.cryptex.notification.repository.NotificationRepository;
 import com.cryptex.notification.service.EmailService;
 import com.cryptex.notification.service.NotificationService;
