@@ -1,2 +1,4 @@
 *.env
-
+.idea/
+**/application-*.yaml
+**/application-*.yml
