@@ -12,6 +12,7 @@ import com.cryptex.notification.repository.NotificationRepository;
 import com.cryptex.notification.service.EmailService;
 import com.cryptex.notification.service.NotificationService;
 import com.cryptex.notification.service.TemplateService;
+import freemarker.template.Configuration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
@@ -32,13 +33,15 @@ public class NotificationServiceImpl implements NotificationService {
     private final TemplateService templateService;
     private final EmailService emailService;
 
+    private final Configuration configuration;
+
     @Override
     public NotificationResponse sendNotification(SendNotificationRequest request) {
 
         NotificationType type = request.type();
 
-        String body = templateService.render(
-                type.getTemplateName(),
+        String body = templateService.renderTemplate(
+                type,
                 request.variables()
         );
 

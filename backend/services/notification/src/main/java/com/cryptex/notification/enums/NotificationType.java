@@ -10,6 +10,8 @@ public enum NotificationType {
     EMAIL_VERIFICATION(
             "Verify your email address",
             "verify-email"
+            // file extension (.ftlh) appended by freemarker
+            // through its configuration (spring.freemarker.suffx)
     ),
 
     PASSWORD_RESET(
