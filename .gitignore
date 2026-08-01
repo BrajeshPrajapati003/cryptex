@@ -1,4 +1,21 @@
-*.env
+# IntelliJ
 .idea/
-**/application-*.yaml
+*.iml
+
+# VS Code
+.vscode/
+
+# Maven
+target/
+
+# Gradle
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Spring profiles
+*.env
 **/application-*.yml
+**/application-*.yaml
