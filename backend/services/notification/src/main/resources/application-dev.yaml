@@ -31,10 +31,23 @@ spring:
     check-template-location: true
     cache: false
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:prajapatibrajesh003@gmail.com}
+    password: ${MAIL_PASSWORD:wkbkdhkzbtjyowiu}
+
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 notification:
   email:
-    from: noreply@cryptex.com
-    reply-to: support@cryptex.com
+    from: ${MAIL_FROM:notifications@cryptex.com} # use this email to send
+    reply-to: ${MAIL_REPLY_TO:support@cryptex.com} # accept replies on this email
 
 logging:
   level:

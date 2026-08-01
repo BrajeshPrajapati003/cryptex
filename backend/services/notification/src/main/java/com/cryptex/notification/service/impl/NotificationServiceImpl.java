@@ -4,6 +4,7 @@ import com.cryptex.notification.dto.request.SendNotificationRequest;
 import com.cryptex.notification.dto.response.NotificationResponse;
 import com.cryptex.notification.entity.Notification;
 import com.cryptex.notification.enums.NotificationType;
+import com.cryptex.notification.exception.EmailSendingException;
 import com.cryptex.notification.exception.NotificationNotFoundException;
 import com.cryptex.notification.factory.NotificationFactory;
 import com.cryptex.notification.mapper.NotificationMapper;
@@ -63,10 +64,18 @@ public class NotificationServiceImpl implements NotificationService {
             emailService.sendEmail(message);
 
             notification.markSent();
-        }catch (MailException ex){
+        }catch (EmailSendingException ex){
 
-            notification.markFailed(ex.getMessage());
+            notification.markFailed("SMTP delivery failed.");
 
+            /*
+            Don't expose:
+                Authentication failed
+                TLS failed
+                Socket timeout
+            to the client.
+            Those stay in the logs through the exception cause.
+             */
             notificationRepository.save(notification);
 
             throw ex;

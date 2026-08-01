@@ -11,6 +11,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
+
 @Component
 @RequiredArgsConstructor
 public class SmtpEmailProvider implements EmailProvider{
@@ -26,7 +28,11 @@ public class SmtpEmailProvider implements EmailProvider{
             MimeMessage mimeMessage = mailSender.createMimeMessage();
 
             MimeMessageHelper helper =
-                    new MimeMessageHelper(mimeMessage, true);
+                    new MimeMessageHelper(
+                            mimeMessage,
+                            true,
+                            StandardCharsets.UTF_8.name()
+                    );
 
             helper.setFrom(properties.getFrom());
             helper.setReplyTo(properties.getReplyTo());
@@ -37,10 +43,12 @@ public class SmtpEmailProvider implements EmailProvider{
             helper.setText(message.body(), true);
 
             mailSender.send(mimeMessage);
+
         }catch (MessagingException | MailException ex){
 
             throw new EmailSendingException(
-                    "Failed to send email: " + ex.getMessage()
+                    "Unable to send email.",
+                    ex
             );
         }
     }

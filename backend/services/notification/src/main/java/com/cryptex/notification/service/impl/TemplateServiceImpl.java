@@ -27,7 +27,7 @@ public class TemplateServiceImpl implements TemplateService {
 
         try {
             Template template =
-                    configuration.getTemplate(type.getTemplateName());
+                    configuration.getTemplate(type.getTemplateName() + ".ftlh");
 
             StringWriter writer = new StringWriter();
 
@@ -37,7 +37,8 @@ public class TemplateServiceImpl implements TemplateService {
         }catch (IOException | TemplateException ex){
 
             throw new TemplateRenderingException(
-                    "Failed to render template: " + type.name()
+                    "Failed to render template: " + type.name(),
+                    ex
             );
         }
     }
