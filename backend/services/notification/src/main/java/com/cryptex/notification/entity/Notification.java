@@ -42,4 +42,19 @@ public class Notification extends BaseEntity {
     private Integer retryCount = 0;
 
     private Instant sentAt;
+
+    public void markSent(){
+        this.status = NotificationStatus.SENT;
+        this.sentAt = Instant.now();
+        this.failureReason = null;
+    }
+
+    public void markFailed(String reason){
+        this.status = NotificationStatus.FAILED;
+        this.failureReason = reason;
+    }
+
+    public void incrementRetryCount(){
+        this.retryCount++;
+    }
 }

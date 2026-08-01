@@ -2,7 +2,7 @@ package com.cryptex.notification.service;
 
 import com.cryptex.notification.dto.model.EmailMessage;
 
-public interface EmailService {
+public interface EmailProvider {
 
-    void sendEmail(EmailMessage message);
+    void send(EmailMessage message);
 }

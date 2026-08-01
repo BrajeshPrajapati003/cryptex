@@ -1,7 +1,11 @@
 package com.cryptex.notification.service;
 
-import org.springframework.stereotype.Service;
+import java.util.Map;
 
-@Service
-public class TemplateService {
+public interface TemplateService {
+
+    String render(
+            String templateName,
+            Map<String, Object> variables
+    );
 }

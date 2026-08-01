@@ -1,0 +1,88 @@
+package com.cryptex.notification.service.impl;
+
+import com.cryptex.notification.dto.request.SendNotificationRequest;
+import com.cryptex.notification.dto.response.NotificationResponse;
+import com.cryptex.notification.entity.Notification;
+import com.cryptex.notification.enums.NotificationType;
+import com.cryptex.notification.exception.NotificationNotFoundException;
+import com.cryptex.notification.factory.NotificationFactory;
+import com.cryptex.notification.mapper.NotificationMapper;
+import com.cryptex.notification.dto.model.EmailMessage;
+import com.cryptex.notification.repository.NotificationRepository;
+import com.cryptex.notification.service.EmailService;
+import com.cryptex.notification.service.NotificationService;
+import com.cryptex.notification.service.TemplateService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.mail.MailException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class NotificationServiceImpl implements NotificationService {
+
+    private final NotificationRepository notificationRepository;
+    private final NotificationMapper notificationMapper;
+
+    private final NotificationFactory notificationFactory;
+
+    private final TemplateService templateService;
+    private final EmailService emailService;
+
+    @Override
+    public NotificationResponse sendNotification(SendNotificationRequest request) {
+
+        NotificationType type = request.type();
+
+        String body = templateService.render(
+                type.getTemplateName(),
+                request.variables()
+        );
+
+        Notification notification =
+                notificationFactory.create(
+                        request,
+                        type,
+                        body
+                );
+
+        try{
+
+            EmailMessage message = new EmailMessage(
+                    notification.getRecipient(),
+                    notification.getSubject(),
+                    notification.getBody()
+            );
+
+            emailService.sendEmail(message);
+
+            notification.markSent();
+        }catch (MailException ex){
+
+            notification.markFailed(ex.getMessage());
+
+            notificationRepository.save(notification);
+
+            throw ex;
+        }
+
+        notificationRepository.save(notification);
+
+        return notificationMapper.toResponse(notification);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public NotificationResponse getNotification(UUID id) {
+
+        Notification notification = notificationRepository
+                        .findById(id)
+                        .orElseThrow(()->
+                                new NotificationNotFoundException(id));
+
+        return notificationMapper.toResponse(notification);
+    }
+}
