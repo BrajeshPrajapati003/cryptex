@@ -12,8 +12,8 @@ spring:
 
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/cryptex_auth}
-    username: ${DB_USERNAME:cryptex}
-    password: ${DB_PASSWORD:db@pass}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -28,9 +28,9 @@ spring:
 
 
 jwt:
-  secret: ${JWT_SECRET:thisIsMyVeryLongJwtSecretKeyForCryptexDevelopment123456789}
-  access-expiration: ${JWT_ACCESS_EXPIRATION:15m} # 15 minutes
-  refresh-expiration: ${JWT_REFRESH_EXPIRATION:7d} # 7 days
+  secret: ${JWT_SECRET}
+  access-expiration: ${JWT_ACCESS_EXPIRATION} # 15 minutes
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION} # 7 days
 
 
 logging:
