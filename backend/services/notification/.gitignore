@@ -1,4 +1,6 @@
 HELP.md
+
+# Maven
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -14,7 +16,7 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -33,6 +35,15 @@ build/
 .vscode/
 
 
-application-*.yaml
-application-*.yml
+# OS
+.DS_Store
+Thumbs.db
+
+
+*.env
+
+
+# Spring profiles
+**/application-*.yml
+**/application-*.yaml
 

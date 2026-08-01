@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8081
 
 spring:
   application:
@@ -11,7 +11,7 @@ spring:
     active: dev
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/cryptex_auth}
+    url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
