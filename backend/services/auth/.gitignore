@@ -31,4 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
 *.env
+**/application-*.yaml
+**/application-*.yml
+
