@@ -49,6 +49,23 @@ public class NotificationFactoryTest {
         assertThat(notification.getRecipient())
                 .isEqualTo("brajesh@example.com");
 
+        assertThat(notification.getSubject())
+                .isEqualTo("Verify your email address");
+
+        assertThat(notification.getBody())
+                .isEqualTo(body);
+
+        assertThat(notification.getType())
+                .isEqualTo(NotificationType.EMAIL_VERIFICATION);
+
+        assertThat(notification.getChannel())
+                .isEqualTo(NotificationChannel.EMAIL);
+
+        assertThat(notification.getStatus())
+                .isEqualTo(NotificationStatus.PENDING);
+
+        assertThat(notification.getRetryCount())
+                .isZero();
 
     }
 }
