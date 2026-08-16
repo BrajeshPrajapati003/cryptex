@@ -176,7 +176,7 @@ public class NotificationServiceImplTest {
                 .body(body)
                 .type(NotificationType.EMAIL_VERIFICATION)
                 .channel(NotificationChannel.EMAIL)
-                .status(NotificationStatus.FAILED)
+                .status(NotificationStatus.PENDING)
                 .retryCount(0)
                 .build();
 
