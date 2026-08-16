@@ -34,7 +34,6 @@ public class NotificationServiceImpl implements NotificationService {
     private final TemplateService templateService;
     private final EmailService emailService;
 
-    private final Configuration configuration;
 
     @Override
     public NotificationResponse sendNotification(SendNotificationRequest request) {
@@ -68,14 +67,6 @@ public class NotificationServiceImpl implements NotificationService {
 
             notification.markFailed("SMTP delivery failed.");
 
-            /*
-            Don't expose:
-                Authentication failed
-                TLS failed
-                Socket timeout
-            to the client.
-            Those stay in the logs through the exception cause.
-             */
             notificationRepository.save(notification);
 
             throw ex;

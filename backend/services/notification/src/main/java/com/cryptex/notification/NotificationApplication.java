@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
-@EnableJpaAuditing
 public class NotificationApplication {
 
 	public static void main(String[] args) {
