@@ -7,6 +7,7 @@ import com.cryptex.auth.dto.response.RefreshTokenResponse;
 import com.cryptex.auth.dto.response.RegisterResponse;
 import com.cryptex.auth.entity.AppUser;
 import com.cryptex.auth.exception.EmailAlreadyExistsException;
+import com.cryptex.auth.exception.InvalidCredentialsException;
 import com.cryptex.auth.mapper.AuthMapper;
 import com.cryptex.auth.repository.AppUserRepository;
 import com.cryptex.auth.security.entity.PasswordResetToken;
@@ -17,6 +18,7 @@ import com.cryptex.auth.security.user.CustomUserDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,39 +57,73 @@ public class AuthService {
 
         AppUser saved = repository.save(user);
 
-        verificationTokenService.create(saved);
+        VerificationToken verificationToken =
+                verificationTokenService.create(saved);
+
+        String verificationLink =
+                "http://localhost:3000/verify?token="
+                + verificationToken.getToken();
+
+        SendNotificationRequest notificationRequest =
+                new SendNotificationRequest(
+                        saved.getEmail(),
+                        "EMAIL_VERIFICATION",
+                        Map.of(
+                                "name", saved.getFirstName(),
+                                "verificationLink", verificationLink
+                        )
+                );
+
+        notificationClient.sendNotification(notificationRequest);
 
         return mapper.toRegisterResponse(saved);
     }
 
+    /**
+     * Spring Security
+     *       │
+     *       │ BadCredentialsException
+     *       ▼
+     * AuthService
+     *       │
+     *       │ InvalidCredentialsException
+     *       ▼
+     * GlobalExceptionHandler
+     *       │
+     *       ▼
+     * HTTP 401
+     */
     public LoginResponse login(LoginRequest request) {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.email(),
-                        request.password()
-                )
-        );
+        try{
+            Authentication authentication =
+                    authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(
+                                    request.email(),
+                                    request.password()
+                            )
+                    );
 
-        CustomUserDetails user =
-                (CustomUserDetails) authentication.getPrincipal();
+            CustomUserDetails user =
+                    (CustomUserDetails) authentication.getPrincipal();
 
-        String accessToken = jwtService.generateToken(user);
+            String accessToken = jwtService.generateToken(user);
 
-        RefreshToken refreshToken = refreshTokenService.create(
-                user.getUser()
-        );
+            RefreshToken refreshToken = refreshTokenService.create(
+                    user.getUser()
+            );
 
-        return new LoginResponse(
-                accessToken,
-                refreshToken.getToken(),
-                "Bearer"
-        );
+            return new LoginResponse(
+                    accessToken,
+                    refreshToken.getToken(),
+                    "Bearer"
+            );
+        }catch (BadCredentialsException ex){
+            throw new InvalidCredentialsException();
+        }
     }
 
-    public RefreshTokenResponse refresh(
-            RefreshTokenRequest request
-    ){
+    public RefreshTokenResponse refresh(RefreshTokenRequest request){
 
         RefreshToken oldToken = refreshTokenService
                 .findByToken(request.refreshToken());
@@ -154,6 +190,8 @@ public class AuthService {
         user.changePassword(
                 passwordEncoder.encode(request.newPassword())
         );
+
+        refreshTokenService.revokeAllByUser(user);
 
         passwordResetTokenService.markUsed(resetToken);
     }

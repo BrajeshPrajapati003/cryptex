@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -73,6 +74,9 @@ public class RefreshTokenService {
         return token;
     }
 
+    /*
+    Revoke ONE session
+     */
     public void revoke(RefreshToken token){
         token.revoke();
         repository.save(token);
@@ -80,6 +84,21 @@ public class RefreshTokenService {
         /*
         Use during logout.
          */
+    }
+
+    /*
+    Revoke ALL sessions
+    Laptop refresh token → revoked=true
+    Phone refresh token  → revoked=true
+    Tablet refresh token → revoked=true
+     */
+    public void revokeAllByUser(AppUser user){
+
+        List<RefreshToken> tokens = repository.findAllByUser(user);
+
+        tokens.forEach(RefreshToken::revoke);
+
+        repository.saveAll(tokens);
     }
 
     public void delete(RefreshToken token){
