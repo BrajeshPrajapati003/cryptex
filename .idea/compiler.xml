@@ -16,14 +16,15 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.6.3/mapstruct-processor-1.6.3.jar" />
         </processorPath>
-        <module name="notification" />
-        <module name="common" />
-        <module name="auth" />
-        <module name="gateway" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="auth" target="21" />
+      <module name="backend" target="1.5" />
+      <module name="common" target="21" />
       <module name="cryptex" target="25" />
+      <module name="gateway" target="21" />
+      <module name="notification" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

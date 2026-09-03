@@ -34,7 +34,6 @@ jwt:
   verification-expiration: ${JWT_VERIFICATION_EXPIRATION} # 24 hours
   password-reset-expiration: ${JWT_PASSWORD_RESET_EXPIRATION} # 15 minutes
 
-
 logging:
   level:
     org.springframework.security: DEBUG

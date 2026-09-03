@@ -31,7 +31,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
 *.env
+<<<<<<< HEAD
 application-*.yaml
 application-*.yml
+=======
+**/application-*.yaml
+**/application-*.yml
+>>>>>>> d8f6131102a92ebf74ffdd4a4acdaf3d591714dd
 
