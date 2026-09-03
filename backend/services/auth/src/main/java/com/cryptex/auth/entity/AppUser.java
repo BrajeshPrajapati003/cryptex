@@ -45,4 +45,8 @@ public class AppUser extends BaseEntity {
         this.password = encodedPassword;
     }
 
+    public void updateProfile(String firstName, String lastName){
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 }

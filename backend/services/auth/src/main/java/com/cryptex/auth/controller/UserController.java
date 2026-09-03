@@ -1,37 +1,39 @@
 package com.cryptex.auth.controller;
 
+import com.cryptex.auth.dto.request.UpdateUserRequest;
 import com.cryptex.auth.dto.response.UserProfileResponse;
 import com.cryptex.auth.entity.AppUser;
 import com.cryptex.auth.repository.AppUserRepository;
+import com.cryptex.auth.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
-    private final AppUserRepository repository;
-
+    private final UserService userService;
 
     @GetMapping("/me")
     public UserProfileResponse me(
             Authentication authentication
     ){
 
-        AppUser user = repository.findByEmail(
-                authentication.getName()
-        ).orElseThrow();
+        return userService.getCurrentUser(authentication.getName());
+    }
 
-        return new UserProfileResponse(
-                user.getId(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getRole()
+    @PatchMapping("/me")
+    public UserProfileResponse updateMe(
+            Authentication authentication,
+            @Valid @RequestBody UpdateUserRequest request
+            ){
+
+        return userService.updateCurrentUser(
+                authentication.getName(),
+                request
         );
     }
 
