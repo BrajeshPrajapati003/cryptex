@@ -1,12 +1,24 @@
 package com.cryptex.auth;
 
+import com.cryptex.common.exception.GlobalExceptionHandler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.context.annotation.Import;
 
-@SpringBootApplication
-@ConfigurationPropertiesScan
+
+/**
+ * @ComponentScan("com.cryptex")
+ * In a multi-module/microservice setup it's too broad.
+ * If we already had JPA auditing enabled somewhere,
+ * and we likely added it again while configuring the broader component scan.
+ *
+ * THE ERROR: The bean 'jpaAuditingHandler' could not be registered.
+ *          A bean with that name has already been defined.
+ *
+ * Reason:
+ *
+ */
 
 /**
  * @ConfigurationPropertiesScan
@@ -17,13 +29,14 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
  */
 
 /**
- * @EnableConfigurationProperties
+ * @EnableConfigurationProperties(JwtProperties.class)
  * Explicitly telling Spring: Register this configuration properties class
  * Useful if we have only one or two properties classes
  */
 
-//@EnableConfigurationProperties(JwtProperties.class)
-//@EnableJpaAuditing
+@SpringBootApplication
+@ConfigurationPropertiesScan
+@Import(GlobalExceptionHandler.class)
 public class  AuthServiceApplication {
 
 	public static void main(String[] args) {

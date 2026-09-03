@@ -1,4 +1,4 @@
-package com.cryptex.auth.dto;
+package com.cryptex.auth.dto.response;
 
 import com.cryptex.auth.enums.Role;
 

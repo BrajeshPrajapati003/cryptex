@@ -1,6 +1,9 @@
 package com.cryptex.auth.controller;
 
-import com.cryptex.auth.dto.*;
+import com.cryptex.auth.dto.request.*;
+import com.cryptex.auth.dto.response.LoginResponse;
+import com.cryptex.auth.dto.response.RefreshTokenResponse;
+import com.cryptex.auth.dto.response.RegisterResponse;
 import com.cryptex.auth.service.AuthService;
 import com.cryptex.common.response.ApiResponse;
 import jakarta.validation.Valid;
@@ -62,5 +65,53 @@ public class AuthController {
     ){
 
         authService.logout(request);
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<ApiResponse<Void>> verifyEmail(
+            @RequestParam String token
+    ){
+
+        authService.verifyEmail(token);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Email verified successfully.",
+                        null
+                )
+        );
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse<Void>> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request
+            ){
+
+        authService.resetPassword(request);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Password reset successfully.",
+                        null
+                )
+        );
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiResponse<Void>> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request
+            ){
+
+        authService.forgotPassword(request);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "If the email exists, a password reset link has been sent.",
+                        null
+                )
+        );
     }
 }

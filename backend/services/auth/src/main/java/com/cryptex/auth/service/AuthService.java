@@ -1,19 +1,28 @@
 package com.cryptex.auth.service;
 
-import com.cryptex.auth.dto.*;
+import com.cryptex.auth.client.NotificationClient;
+import com.cryptex.auth.dto.request.*;
+import com.cryptex.auth.dto.response.LoginResponse;
+import com.cryptex.auth.dto.response.RefreshTokenResponse;
+import com.cryptex.auth.dto.response.RegisterResponse;
 import com.cryptex.auth.entity.AppUser;
 import com.cryptex.auth.exception.EmailAlreadyExistsException;
 import com.cryptex.auth.mapper.AuthMapper;
 import com.cryptex.auth.repository.AppUserRepository;
+import com.cryptex.auth.security.entity.PasswordResetToken;
 import com.cryptex.auth.security.entity.RefreshToken;
+import com.cryptex.auth.security.entity.VerificationToken;
 import com.cryptex.auth.security.jwt.JwtService;
 import com.cryptex.auth.security.user.CustomUserDetails;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +35,11 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+
+    private final VerificationTokenService verificationTokenService;
+    private final PasswordResetTokenService passwordResetTokenService;
+
+    private final NotificationClient notificationClient;
 
     public RegisterResponse register(RegisterRequest request) {
 
@@ -40,6 +54,8 @@ public class AuthService {
         );
 
         AppUser saved = repository.save(user);
+
+        verificationTokenService.create(saved);
 
         return mapper.toRegisterResponse(saved);
     }
@@ -109,4 +125,67 @@ public class AuthService {
 
         refreshTokenService.delete(token);
     }
+
+    @Transactional
+    public void verifyEmail(String token){
+
+        VerificationToken verificationToken =
+                verificationTokenService.findByToken(token);
+
+        verificationTokenService.verify(verificationToken);
+
+        AppUser user = verificationToken.getUser();
+
+        user.enable();
+
+        verificationTokenService.markUsed(verificationToken);
+    }
+
+    @Transactional
+    public void resetPassword(ResetPasswordRequest request){
+
+        PasswordResetToken resetToken =
+                passwordResetTokenService.findByToken(request.token());
+
+        passwordResetTokenService.verify(resetToken);
+
+        AppUser user = resetToken.getUser();
+
+        user.changePassword(
+                passwordEncoder.encode(request.newPassword())
+        );
+
+        passwordResetTokenService.markUsed(resetToken);
+    }
+
+    @Transactional
+    public void forgotPassword(ForgotPasswordRequest request){
+
+        repository.findByEmail(request.email())
+                .ifPresent(user -> {
+
+                    // Invalidate any previous reset tokens
+                    passwordResetTokenService.deleteByUser(user);
+
+                    PasswordResetToken resetToken =
+                            passwordResetTokenService.create(user);
+
+                    String resetLink =
+                            "http://localhost:3000/reset-password?token="
+                            + resetToken.getToken();
+
+                    SendNotificationRequest notificationRequest =
+                            new SendNotificationRequest(
+                            user.getEmail(),
+                            "PASSWORD_RESET",
+                            Map.of(
+                                    "name", user.getFirstName(),
+                                    "resetLink", resetLink
+                            )
+                    );
+
+                    notificationClient.sendNotification(notificationRequest);
+                });
+    }
+
 }

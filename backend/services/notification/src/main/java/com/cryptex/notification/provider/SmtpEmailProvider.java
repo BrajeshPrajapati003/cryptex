@@ -52,5 +52,9 @@ public class SmtpEmailProvider implements EmailProvider{
             );
         }
     }
-
 }
+
+/**
+ * Notification Service saying SENT means the SMTP server accepted the message for delivery.
+ * It does not mean the recipient's mailbox actually exists.
+ */

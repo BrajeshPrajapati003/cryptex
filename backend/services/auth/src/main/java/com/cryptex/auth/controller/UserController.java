@@ -1,6 +1,6 @@
 package com.cryptex.auth.controller;
 
-import com.cryptex.auth.dto.UserProfileResponse;
+import com.cryptex.auth.dto.response.UserProfileResponse;
 import com.cryptex.auth.entity.AppUser;
 import com.cryptex.auth.repository.AppUserRepository;
 import lombok.RequiredArgsConstructor;

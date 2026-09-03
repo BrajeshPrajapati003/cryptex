@@ -1,8 +1,8 @@
 package com.cryptex.auth.mapper;
 
-import com.cryptex.auth.dto.LoginResponse;
-import com.cryptex.auth.dto.RegisterRequest;
-import com.cryptex.auth.dto.RegisterResponse;
+import com.cryptex.auth.dto.response.LoginResponse;
+import com.cryptex.auth.dto.request.RegisterRequest;
+import com.cryptex.auth.dto.response.RegisterResponse;
 import com.cryptex.auth.entity.AppUser;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

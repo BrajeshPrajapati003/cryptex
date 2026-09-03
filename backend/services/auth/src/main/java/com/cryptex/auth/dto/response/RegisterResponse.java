@@ -1,4 +1,4 @@
-package com.cryptex.auth.dto;
+package com.cryptex.auth.dto.response;
 
 import java.util.UUID;
 

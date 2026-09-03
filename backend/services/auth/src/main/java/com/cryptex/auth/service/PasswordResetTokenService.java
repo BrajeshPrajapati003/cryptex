@@ -1,10 +1,10 @@
 package com.cryptex.auth.service;
 
 import com.cryptex.auth.entity.AppUser;
-import com.cryptex.auth.exception.InvalidVerificationTokenException;
+import com.cryptex.auth.exception.InvalidPasswordResetTokenException;
 import com.cryptex.auth.security.config.JwtProperties;
-import com.cryptex.auth.security.entity.VerificationToken;
-import com.cryptex.auth.security.repository.VerificationTokenRepository;
+import com.cryptex.auth.security.entity.PasswordResetToken;
+import com.cryptex.auth.security.repository.PasswordResetTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +14,15 @@ import java.util.Base64;
 
 @Service
 @RequiredArgsConstructor
-public class VerificationTokenService {
+public class PasswordResetTokenService {
 
-    private final VerificationTokenRepository repository;
+    private final PasswordResetTokenRepository repository;
     private final JwtProperties jwtProperties;
 
-    public VerificationToken create(AppUser user){
+    public PasswordResetToken create(AppUser user){
+
+        // Invalidate previous reset tokens for this user
+        repository.deleteByUser(user);
 
         SecureRandom random = new SecureRandom();
 
@@ -30,48 +33,51 @@ public class VerificationTokenService {
                 .withoutPadding()
                 .encodeToString(bytes);
 
-        VerificationToken token = VerificationToken.builder()
+        PasswordResetToken token = PasswordResetToken.builder()
                 .token(secureToken)
                 .user(user)
                 .expiresAt(
                         Instant.now()
-                                .plus(jwtProperties.verificationExpiration())
+                                .plus(jwtProperties.passwordResetExpiration())
                 ).used(false)
                 .build();
 
         return repository.save(token);
     }
 
-    public VerificationToken findByToken(String token){
+    public PasswordResetToken findByToken(String token){
 
         return repository.findByToken(token)
-                .orElseThrow(InvalidVerificationTokenException::new);
+                .orElseThrow(InvalidPasswordResetTokenException::new);
     }
 
-    public VerificationToken verify(VerificationToken token){
+    public PasswordResetToken verify(PasswordResetToken token){
 
         if (token.isUsed()){
-            throw new InvalidVerificationTokenException();
+            throw new InvalidPasswordResetTokenException();
         }
 
         if (token.getExpiresAt().isBefore(Instant.now())){
-
             repository.delete(token);
 
-            throw new InvalidVerificationTokenException();
+            throw new InvalidPasswordResetTokenException();
         }
 
         return token;
     }
 
-    public void markUsed(VerificationToken token){
+    public void markUsed(PasswordResetToken token){
 
         token.markUsed();
         repository.save(token);
     }
 
-    public void delete(VerificationToken token){
+    public void delete(PasswordResetToken token){
 
         repository.delete(token);
+    }
+
+    public void deleteByUser(AppUser user){
+        repository.deleteByUser(user);
     }
 }

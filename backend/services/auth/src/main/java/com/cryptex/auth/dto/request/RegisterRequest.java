@@ -1,4 +1,4 @@
-package com.cryptex.auth.dto;
+package com.cryptex.auth.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
