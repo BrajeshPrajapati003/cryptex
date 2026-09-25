@@ -1,6 +1,4 @@
-export type Role = "USER" | "ADMIN";
-
-export interface UserProfile {
+export interface UserProfileResponse{
     id: string;
     firstName: string;
     lastName: string;
@@ -8,7 +6,12 @@ export interface UserProfile {
     role: Role;
 }
 
-export interface UpdateUserRequest {
+export interface UpdateUserRequest{
     firstName: string;
     lastName: string;
+}
+
+export enum Role{
+    USER = "USER",
+    ADMIN = "ADMIN",
 }
