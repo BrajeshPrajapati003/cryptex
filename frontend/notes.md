@@ -296,4 +296,70 @@ Next.js Route Handlers are defined using route.ts files inside the App Router an
 
 
 
+**Need of Zod**
+
+Currently we're doing:
+
+const body =
+    (await request.json()) as LoginRequest;
+
+This is a **type assertion**, not validation.
+
+TypeScript does not actually validate the incoming JSON.
+
+If someone sends:
+
+{
+    "email": 123,
+    "password": true
+}
+
+TypeScript doesn't magically stop it.
+
+Why?
+
+Because TypeScript disappears at runtime.
+
+This:
+
+as LoginRequest
+
+only tells the TypeScript compiler:
+
+"Trust me."
+
+It does not validate the actual HTTP request.
+
+We'll eventually add runtime validation—most likely with a schema validation library such as Zod—at the appropriate boundary.
+
+But don't add Zod yet.
+We're keeping dependencies lean until we actually need them.
+
+
+
+**Notice the TS Syntax**
+
+body: JSON.stringify({
+    refreshToken,
+} satisfies RefreshTokenRequest),
+
+
+satisfies tells TypeScript:
+
+Verify that this object conforms to RefreshTokenRequest, but don't unnecessarily change the inferred type of the object.
+
+Compare that with:
+
+const request: RefreshTokenRequest = {
+    refreshToken,
+};
+
+which also works.
+
+But:
+
+**satisfies** is extremely useful when you want compile-time verification without losing the object's more specific inferred type.
+
+
+
 

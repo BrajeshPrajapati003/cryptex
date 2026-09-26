@@ -2,7 +2,10 @@
 This module must never be imported on the client side
 because this file uses: process.env.API_BASE_URL, which is only available on the server side.
 */
+import { responseCookiesToRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import "server-only";
+import { ApiError } from "./errors";
+
 
 const API_BASE_URL = process.env.API_BASE_URL;
 
@@ -25,9 +28,37 @@ export async function serverApiClient<T>(
         },
     )
 
+    let responseData: unknown = undefined;
+
+    if (response.status !== 204) {
+        
+        const contentType = response.headers.get("content-type");
+
+        if (contentType?.includes("application/json")){
+            responseData = await response.json();
+        }else{
+            responseData = await response.text();
+        }
+    }
+
     if (!response.ok) {
-        throw new Error(
-            `Backend request failed ${response.status}`,
+
+        let message = 
+        `Backend request failed with status ${response.status}`;
+
+        if(
+            typeof responseData === "object" &&
+            responseData !== null &&
+            "message" in responseData &&
+            typeof responseData.message === "string"
+        ){
+            message = responseData.message;
+        }
+
+        throw new ApiError(
+            message,
+            response.status,
+            responseData
         );
     }
 
@@ -35,6 +66,5 @@ export async function serverApiClient<T>(
         return undefined as T;
     }
 
-    return response.json() as Promise<T>;
+    return responseData as T;
 }
-

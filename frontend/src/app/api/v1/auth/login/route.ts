@@ -14,6 +14,8 @@ import {
     AUTH_COOKIE_NAMES, 
     REFRESH_TOKEN_COOKIE_OPTIONS 
 } from "@/lib/auth/cookies";
+import { ApiError } from "@/lib/api/errors";
+import { serializeUseCacheCacheStore } from "next/dist/server/resume-data-cache/cache-store";
 
 
 export async function POST(request: Request){
@@ -54,6 +56,19 @@ export async function POST(request: Request){
 
     } catch (error){
         console.error("Login failed: ", error);
+
+        if (error instanceof ApiError) {
+            
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: error.message,
+                },
+                {
+                    status: error.status,
+                },
+            );
+        }
 
         return NextResponse.json(
             {

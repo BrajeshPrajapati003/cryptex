@@ -1,5 +1,6 @@
 export class ApiError extends Error {
-    readonly status: number;
+    readonly status: number; 
+    // readOnly because later we don't want them to be changed once the error is constructed
     readonly data: unknown;
 
     constructor(
