@@ -2,7 +2,6 @@
 This module must never be imported on the client side
 because this file uses: process.env.API_BASE_URL, which is only available on the server side.
 */
-import { responseCookiesToRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import "server-only";
 import { ApiError } from "./errors";
 

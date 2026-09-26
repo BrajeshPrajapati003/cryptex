@@ -20,7 +20,7 @@ export async function updateCurrentUser(
     return apiClient<UserProfileResponse>(
         "/api/v1/users/me",
         {
-            method: "PUT",
+            method: "PATCH",
             body: JSON.stringify(data),
         },
     );

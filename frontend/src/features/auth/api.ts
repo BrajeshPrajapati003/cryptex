@@ -39,14 +39,15 @@ export async function register(
 }
 
 
-export async function refreshToken(
-  data: RefreshTokenRequest,
+export async function refreshToken( 
+  // it gets the refreshToken from the cookie
+  // data: RefreshTokenRequest,
 ): Promise<RefreshTokenResponse> {
   return apiClient<RefreshTokenResponse>(
     "/api/v1/auth/refresh",
     {
       method: "POST",
-      body: JSON.stringify(data),
+      // body: JSON.stringify(data),
     },
   );
 }

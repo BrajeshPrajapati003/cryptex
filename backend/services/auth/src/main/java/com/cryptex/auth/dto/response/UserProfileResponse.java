@@ -8,7 +8,7 @@ public record UserProfileResponse(
 
         UUID id,
         String firstName,
-        String lastname,
+        String lastName,
         String email,
         Role role
 ) {
